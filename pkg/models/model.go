@@ -180,6 +180,9 @@ func (q dbi) Find(id int64, table Table) (interface{}, error) {
 		if err := rows.StructScan(output); err != nil {
 			return nil, err
 		}
+	} else {
+		// not found
+		return nil, nil
 	}
 
 	if err := rows.Err(); err != nil {
