@@ -83,7 +83,7 @@ func (r *mutationResolver) PerformerUpdate(ctx context.Context, input models.Per
 
 	// get the existing performer and modify it
 	performerID, _ := strconv.ParseInt(input.ID, 10, 64)
-	updatedPerformer, err := qb.Find(performerID)
+	updatedPerformer, err := qb.Find(performerID, nil)
 
 	if err != nil {
 		return nil, err

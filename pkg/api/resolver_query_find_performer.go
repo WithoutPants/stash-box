@@ -15,7 +15,7 @@ func (r *queryResolver) FindPerformer(ctx context.Context, id string) (*models.P
 	qb := models.NewPerformerQueryBuilder()
 
 	idInt, _ := strconv.ParseInt(id, 10, 64)
-	return qb.Find(idInt)
+	return qb.Find(idInt, nil)
 }
 func (r *queryResolver) QueryPerformers(ctx context.Context, performerFilter *models.PerformerFilterType, filter *models.QuerySpec) (*models.QueryPerformersResultType, error) {
 	if err := validateRead(ctx); err != nil {
