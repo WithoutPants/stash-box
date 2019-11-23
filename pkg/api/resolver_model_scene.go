@@ -39,8 +39,8 @@ func (r *sceneResolver) Studio(ctx context.Context, obj *models.Scene) (*models.
 	return parent, nil
 }
 func (r *sceneResolver) Tags(ctx context.Context, obj *models.Scene) ([]*models.Tag, error) {
-	qb := models.NewTagQueryBuilder()
-	return qb.FindBySceneID(obj.ID, nil)
+	qb := models.NewTagQueryBuilder(nil)
+	return qb.FindBySceneID(obj.ID)
 }
 func (r *sceneResolver) Performers(ctx context.Context, obj *models.Scene) ([]*models.PerformerAppearance, error) {
 	// TODO
