@@ -4,20 +4,19 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/stashapp/stashdb/pkg/database"
+
 	"github.com/jmoiron/sqlx"
 )
 
-type PerformerQueryBuilder struct{}
+type PerformerQueryBuilder struct {
+	dbi database.DBI
+}
 
-const performerTable = "performers"
-const performerAliasesJoinTable = "performer_aliases"
-const performerUrlsJoinTable = "performer_urls"
-const performerTattoosJoinTable = "performer_tattoos"
-const performerPiercingsJoinTable = "performer_piercings"
-const performerJoinKey = "performer_id"
-
-func NewPerformerQueryBuilder() PerformerQueryBuilder {
-	return PerformerQueryBuilder{}
+func NewPerformerQueryBuilder(tx *sqlx.Tx) PerformerQueryBuilder {
+	return PerformerQueryBuilder{
+		dbi: database.DBIWithTxn(tx),
+	}
 }
 
 func (qb *PerformerQueryBuilder) toModel(ro interface{}) *Performer {
@@ -28,58 +27,58 @@ func (qb *PerformerQueryBuilder) toModel(ro interface{}) *Performer {
 	return nil
 }
 
-func (qb *PerformerQueryBuilder) Create(newPerformer Performer, tx *sqlx.Tx) (*Performer, error) {
-	ret, err := DBIWithTxn(tx).Insert(newPerformer)
+func (qb *PerformerQueryBuilder) Create(newPerformer Performer) (*Performer, error) {
+	ret, err := qb.dbi.Insert(newPerformer)
 	return qb.toModel(ret), err
 }
 
-func (qb *PerformerQueryBuilder) Update(updatedPerformer Performer, tx *sqlx.Tx) (*Performer, error) {
-	ret, err := DBIWithTxn(tx).Update(updatedPerformer)
+func (qb *PerformerQueryBuilder) Update(updatedPerformer Performer) (*Performer, error) {
+	ret, err := qb.dbi.Update(updatedPerformer)
 	return qb.toModel(ret), err
 }
 
-func (qb *PerformerQueryBuilder) Destroy(id int64, tx *sqlx.Tx) error {
-	return DBIWithTxn(tx).Delete(id, performerDBTable)
+func (qb *PerformerQueryBuilder) Destroy(id int64) error {
+	return qb.dbi.Delete(id, performerDBTable)
 }
 
-func (qb *PerformerQueryBuilder) CreateAliases(newJoins PerformerAliases, tx *sqlx.Tx) error {
-	return DBIWithTxn(tx).InsertJoins(performerAliasTable, &newJoins)
+func (qb *PerformerQueryBuilder) CreateAliases(newJoins PerformerAliases) error {
+	return qb.dbi.InsertJoins(performerAliasTable, &newJoins)
 }
 
-func (qb *PerformerQueryBuilder) UpdateAliases(performerID int64, updatedJoins PerformerAliases, tx *sqlx.Tx) error {
-	return DBIWithTxn(tx).ReplaceJoins(performerAliasTable, performerID, &updatedJoins)
+func (qb *PerformerQueryBuilder) UpdateAliases(performerID int64, updatedJoins PerformerAliases) error {
+	return qb.dbi.ReplaceJoins(performerAliasTable, performerID, &updatedJoins)
 }
 
-func (qb *PerformerQueryBuilder) CreateUrls(newJoins PerformerUrls, tx *sqlx.Tx) error {
-	return DBIWithTxn(tx).InsertJoins(performerUrlTable, &newJoins)
+func (qb *PerformerQueryBuilder) CreateUrls(newJoins PerformerUrls) error {
+	return qb.dbi.InsertJoins(performerUrlTable, &newJoins)
 }
 
-func (qb *PerformerQueryBuilder) UpdateUrls(performerID int64, updatedJoins PerformerUrls, tx *sqlx.Tx) error {
-	return DBIWithTxn(tx).ReplaceJoins(performerUrlTable, performerID, &updatedJoins)
+func (qb *PerformerQueryBuilder) UpdateUrls(performerID int64, updatedJoins PerformerUrls) error {
+	return qb.dbi.ReplaceJoins(performerUrlTable, performerID, &updatedJoins)
 }
 
-func (qb *PerformerQueryBuilder) CreateTattoos(newJoins PerformerBodyMods, tx *sqlx.Tx) error {
-	return DBIWithTxn(tx).InsertJoins(performerTattooTable, &newJoins)
+func (qb *PerformerQueryBuilder) CreateTattoos(newJoins PerformerBodyMods) error {
+	return qb.dbi.InsertJoins(performerTattooTable, &newJoins)
 }
 
-func (qb *PerformerQueryBuilder) UpdateTattoos(performerID int64, updatedJoins PerformerBodyMods, tx *sqlx.Tx) error {
-	return DBIWithTxn(tx).ReplaceJoins(performerTattooTable, performerID, &updatedJoins)
+func (qb *PerformerQueryBuilder) UpdateTattoos(performerID int64, updatedJoins PerformerBodyMods) error {
+	return qb.dbi.ReplaceJoins(performerTattooTable, performerID, &updatedJoins)
 }
 
-func (qb *PerformerQueryBuilder) CreatePiercings(newJoins PerformerBodyMods, tx *sqlx.Tx) error {
-	return DBIWithTxn(tx).InsertJoins(performerPiercingTable, &newJoins)
+func (qb *PerformerQueryBuilder) CreatePiercings(newJoins PerformerBodyMods) error {
+	return qb.dbi.InsertJoins(performerPiercingTable, &newJoins)
 }
 
-func (qb *PerformerQueryBuilder) UpdatePiercings(performerID int64, updatedJoins PerformerBodyMods, tx *sqlx.Tx) error {
-	return DBIWithTxn(tx).ReplaceJoins(performerPiercingTable, performerID, &updatedJoins)
+func (qb *PerformerQueryBuilder) UpdatePiercings(performerID int64, updatedJoins PerformerBodyMods) error {
+	return qb.dbi.ReplaceJoins(performerPiercingTable, performerID, &updatedJoins)
 }
 
-func (qb *PerformerQueryBuilder) Find(id int64, tx *sqlx.Tx) (*Performer, error) {
-	ret, err := DBIWithTxn(tx).Find(id, performerDBTable)
+func (qb *PerformerQueryBuilder) Find(id int64) (*Performer, error) {
+	ret, err := qb.dbi.Find(id, performerDBTable)
 	return qb.toModel(ret), err
 }
 
-func (qb *PerformerQueryBuilder) FindBySceneID(sceneID int, tx *sqlx.Tx) (Performers, error) {
+func (qb *PerformerQueryBuilder) FindBySceneID(sceneID int) (Performers, error) {
 	query := `
 		SELECT performers.* FROM performers
 		LEFT JOIN performers_scenes as scenes_join on scenes_join.performer_id = performers.id
@@ -88,19 +87,19 @@ func (qb *PerformerQueryBuilder) FindBySceneID(sceneID int, tx *sqlx.Tx) (Perfor
 		GROUP BY performers.id
 	`
 	args := []interface{}{sceneID}
-	return qb.queryPerformers(query, args, tx)
+	return qb.queryPerformers(query, args)
 }
 
-func (qb *PerformerQueryBuilder) FindByNames(names []string, tx *sqlx.Tx) (Performers, error) {
+func (qb *PerformerQueryBuilder) FindByNames(names []string) (Performers, error) {
 	query := "SELECT * FROM performers WHERE name IN " + getInBinding(len(names))
 	var args []interface{}
 	for _, name := range names {
 		args = append(args, name)
 	}
-	return qb.queryPerformers(query, args, tx)
+	return qb.queryPerformers(query, args)
 }
 
-func (qb *PerformerQueryBuilder) FindByAliases(names []string, tx *sqlx.Tx) (Performers, error) {
+func (qb *PerformerQueryBuilder) FindByAliases(names []string) (Performers, error) {
 	query := `SELECT performers.* FROM performers
 		left join performer_aliases on performers.id = performer_aliases.performer_id
 		WHERE performer_aliases.alias IN ` + getInBinding(len(names))
@@ -109,24 +108,24 @@ func (qb *PerformerQueryBuilder) FindByAliases(names []string, tx *sqlx.Tx) (Per
 	for _, name := range names {
 		args = append(args, name)
 	}
-	return qb.queryPerformers(query, args, tx)
+	return qb.queryPerformers(query, args)
 }
 
-func (qb *PerformerQueryBuilder) FindByName(name string, tx *sqlx.Tx) (Performers, error) {
+func (qb *PerformerQueryBuilder) FindByName(name string) (Performers, error) {
 	query := "SELECT * FROM performers WHERE upper(name) = upper(?)"
 	var args []interface{}
 	args = append(args, name)
-	return qb.queryPerformers(query, args, tx)
+	return qb.queryPerformers(query, args)
 }
 
-func (qb *PerformerQueryBuilder) FindByAlias(name string, tx *sqlx.Tx) (Performers, error) {
+func (qb *PerformerQueryBuilder) FindByAlias(name string) (Performers, error) {
 	query := `SELECT performers.* FROM performers
 		left join performer_aliases on performers.id = performer_aliases.performer_id
 		WHERE upper(performer_aliases.alias) = UPPER(?)`
 
 	var args []interface{}
 	args = append(args, name)
-	return qb.queryPerformers(query, args, tx)
+	return qb.queryPerformers(query, args)
 }
 
 func (qb *PerformerQueryBuilder) Count() (int, error) {
@@ -182,7 +181,7 @@ func (qb *PerformerQueryBuilder) Query(performerFilter *PerformerFilterType, fin
 
 	var performers []*Performer
 	for _, id := range idsResult {
-		performer, _ := qb.Find(id, nil)
+		performer, _ := qb.Find(id)
 		performers = append(performers, performer)
 	}
 
@@ -273,36 +272,36 @@ func (qb *PerformerQueryBuilder) getPerformerSort(findFilter *QuerySpec) string 
 	return getSort(sort, direction, "performers")
 }
 
-func (qb *PerformerQueryBuilder) queryPerformers(query string, args []interface{}, tx *sqlx.Tx) (Performers, error) {
+func (qb *PerformerQueryBuilder) queryPerformers(query string, args []interface{}) (Performers, error) {
 	output := Performers{}
-	err := DBIWithTxn(tx).RawQuery(performerDBTable, query, args, &output)
+	err := qb.dbi.RawQuery(performerDBTable, query, args, &output)
 	return output, err
 }
 
 func (qb *PerformerQueryBuilder) GetAliases(id int64) ([]string, error) {
 	joins := PerformerAliases{}
-	err := DBIWithTxn(nil).FindJoins(performerAliasTable, id, &joins)
+	err := qb.dbi.FindJoins(performerAliasTable, id, &joins)
 
 	return joins.ToAliases(), err
 }
 
 func (qb *PerformerQueryBuilder) GetUrls(id int64) (PerformerUrls, error) {
 	joins := PerformerUrls{}
-	err := DBIWithTxn(nil).FindJoins(performerUrlTable, id, &joins)
+	err := qb.dbi.FindJoins(performerUrlTable, id, &joins)
 
 	return joins, err
 }
 
 func (qb *PerformerQueryBuilder) GetTattoos(id int64) (PerformerBodyMods, error) {
 	joins := PerformerBodyMods{}
-	err := DBIWithTxn(nil).FindJoins(performerTattooTable, id, &joins)
+	err := qb.dbi.FindJoins(performerTattooTable, id, &joins)
 
 	return joins, err
 }
 
 func (qb *PerformerQueryBuilder) GetPiercings(id int64) (PerformerBodyMods, error) {
 	joins := PerformerBodyMods{}
-	err := DBIWithTxn(nil).FindJoins(performerPiercingTable, id, &joins)
+	err := qb.dbi.FindJoins(performerPiercingTable, id, &joins)
 
 	return joins, err
 }

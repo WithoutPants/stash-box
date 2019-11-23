@@ -2,26 +2,33 @@ package models
 
 import (
 	"database/sql"
+
+	"github.com/stashapp/stashdb/pkg/database"
+)
+
+const (
+	performerTable   = "performers"
+	performerJoinKey = "performer_id"
 )
 
 var (
-	performerDBTable = NewTable(performerTable, func() interface{} {
+	performerDBTable = database.NewTable(performerTable, func() interface{} {
 		return &Performer{}
 	})
 
-	performerAliasTable = NewTableJoin(performerTable, "performer_aliases", performerJoinKey, func() interface{} {
+	performerAliasTable = database.NewTableJoin(performerTable, "performer_aliases", performerJoinKey, func() interface{} {
 		return &PerformerAlias{}
 	})
 
-	performerUrlTable = NewTableJoin(performerTable, "performer_urls", performerJoinKey, func() interface{} {
+	performerUrlTable = database.NewTableJoin(performerTable, "performer_urls", performerJoinKey, func() interface{} {
 		return &PerformerUrl{}
 	})
 
-	performerTattooTable = NewTableJoin(performerTable, "performer_tattoos", performerJoinKey, func() interface{} {
+	performerTattooTable = database.NewTableJoin(performerTable, "performer_tattoos", performerJoinKey, func() interface{} {
 		return &PerformerBodyMod{}
 	})
 
-	performerPiercingTable = NewTableJoin(performerTable, "performer_piercings", performerJoinKey, func() interface{} {
+	performerPiercingTable = database.NewTableJoin(performerTable, "performer_piercings", performerJoinKey, func() interface{} {
 		return &PerformerBodyMod{}
 	})
 )
@@ -50,7 +57,7 @@ type Performer struct {
 	UpdatedAt         SQLiteTimestamp `db:"updated_at" json:"updated_at"`
 }
 
-func (Performer) GetTable() Table {
+func (Performer) GetTable() database.Table {
 	return performerDBTable
 }
 
