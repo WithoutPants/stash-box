@@ -234,7 +234,7 @@ func (q dbi) RawQuery(table Table, query string, args []interface{}, output Mode
 
 	for rows.Next() {
 		o := table.NewObject()
-		if err := rows.StructScan(output); err != nil {
+		if err := rows.StructScan(o); err != nil {
 			return err
 		}
 

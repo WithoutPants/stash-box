@@ -65,7 +65,7 @@ func (p Performer) GetID() int64 {
 	return p.ID
 }
 
-type Performers []Performer
+type Performers []*Performer
 
 func (p Performers) Each(fn func(interface{})) {
 	for _, v := range p {
@@ -74,7 +74,7 @@ func (p Performers) Each(fn func(interface{})) {
 }
 
 func (p *Performers) Add(o interface{}) {
-	*p = append(*p, o.(Performer))
+	*p = append(*p, o.(*Performer))
 }
 
 type PerformerAlias struct {

@@ -29,7 +29,7 @@ func (r *sceneResolver) Studio(ctx context.Context, obj *models.Scene) (*models.
 		return nil, nil
 	}
 
-	qb := models.NewStudioQueryBuilder()
+	qb := models.NewStudioQueryBuilder(nil)
 	parent, err := qb.Find(obj.StudioID.Int64)
 
 	if err != nil {
