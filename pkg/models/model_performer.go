@@ -69,7 +69,7 @@ type Performers []*Performer
 
 func (p Performers) Each(fn func(interface{})) {
 	for _, v := range p {
-		fn(v)
+		fn(*v)
 	}
 }
 
@@ -82,16 +82,16 @@ type PerformerAlias struct {
 	Alias       string `db:"alias" json:"alias"`
 }
 
-type PerformerAliases []PerformerAlias
+type PerformerAliases []*PerformerAlias
 
 func (p PerformerAliases) Each(fn func(interface{})) {
 	for _, v := range p {
-		fn(v)
+		fn(*v)
 	}
 }
 
 func (p *PerformerAliases) Add(o interface{}) {
-	*p = append(*p, o.(PerformerAlias))
+	*p = append(*p, o.(*PerformerAlias))
 }
 
 func (p PerformerAliases) ToAliases() []string {
@@ -107,7 +107,7 @@ func CreatePerformerAliases(performerId int64, aliases []string) PerformerAliase
 	var ret PerformerAliases
 
 	for _, alias := range aliases {
-		ret = append(ret, PerformerAlias{PerformerID: performerId, Alias: alias})
+		ret = append(ret, &PerformerAlias{PerformerID: performerId, Alias: alias})
 	}
 
 	return ret
@@ -126,23 +126,23 @@ func (p *PerformerUrl) ToURL() URL {
 	}
 }
 
-type PerformerUrls []PerformerUrl
+type PerformerUrls []*PerformerUrl
 
 func (p PerformerUrls) Each(fn func(interface{})) {
 	for _, v := range p {
-		fn(v)
+		fn(*v)
 	}
 }
 
 func (p *PerformerUrls) Add(o interface{}) {
-	*p = append(*p, o.(PerformerUrl))
+	*p = append(*p, o.(*PerformerUrl))
 }
 
 func CreatePerformerUrls(performerId int64, urls []*URLInput) PerformerUrls {
 	var ret PerformerUrls
 
 	for _, urlInput := range urls {
-		ret = append(ret, PerformerUrl{
+		ret = append(ret, &PerformerUrl{
 			PerformerID: performerId,
 			URL:         urlInput.URL,
 			Type:        urlInput.Type,
@@ -169,16 +169,16 @@ func (m PerformerBodyMod) ToBodyModification() BodyModification {
 	return ret
 }
 
-type PerformerBodyMods []PerformerBodyMod
+type PerformerBodyMods []*PerformerBodyMod
 
 func (p PerformerBodyMods) Each(fn func(interface{})) {
 	for _, v := range p {
-		fn(v)
+		fn(*v)
 	}
 }
 
 func (p *PerformerBodyMods) Add(o interface{}) {
-	*p = append(*p, o.(PerformerBodyMod))
+	*p = append(*p, o.(*PerformerBodyMod))
 }
 
 func CreatePerformerBodyMods(performerId int64, urls []*BodyModificationInput) PerformerBodyMods {
@@ -191,7 +191,7 @@ func CreatePerformerBodyMods(performerId int64, urls []*BodyModificationInput) P
 			description.String = *bmInput.Description
 			description.Valid = true
 		}
-		ret = append(ret, PerformerBodyMod{
+		ret = append(ret, &PerformerBodyMod{
 			PerformerID: performerId,
 			Location:    bmInput.Location,
 			Description: description,

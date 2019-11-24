@@ -38,14 +38,14 @@ func (r *mutationResolver) SceneCreate(ctx context.Context, input models.SceneCr
 		return nil, err
 	}
 
-	// Save the aliases
+	// Save the checksums
 	sceneAliases := models.CreateSceneChecksums(scene.ID, input.Checksums)
 	if err := qb.CreateChecksums(sceneAliases); err != nil {
 		_ = tx.Rollback()
 		return nil, err
 	}
 
-	// TODO - save the performers
+	// save the performers
 	scenePerformers := models.CreateScenePerformers(scene.ID, input.Performers)
 	jqb := models.NewJoinsQueryBuilder(tx)
 	if err := jqb.CreatePerformersScenes(scenePerformers); err != nil {
@@ -96,27 +96,34 @@ func (r *mutationResolver) SceneUpdate(ctx context.Context, input models.SceneUp
 	}
 
 	// Save the checksums
-	// TODO - only do this if provided
-	sceneAliases := models.CreateSceneChecksums(scene.ID, input.Checksums)
-	if err := qb.UpdateChecksums(scene.ID, sceneAliases); err != nil {
-		_ = tx.Rollback()
-		return nil, err
+	// only do this if provided
+	if wasFieldIncluded(ctx, "checksums") {
+		sceneChecksums := models.CreateSceneChecksums(scene.ID, input.Checksums)
+		if err := qb.UpdateChecksums(scene.ID, sceneChecksums); err != nil {
+			_ = tx.Rollback()
+			return nil, err
+		}
 	}
 
-	// TODO - only do this if provided
-	scenePerformers := models.CreateScenePerformers(scene.ID, input.Performers)
 	jqb := models.NewJoinsQueryBuilder(tx)
-	if err := jqb.UpdatePerformersScenes(scene.ID, scenePerformers); err != nil {
-		_ = tx.Rollback()
-		return nil, err
+
+	// only do this if provided
+	if wasFieldIncluded(ctx, "performers") {
+		scenePerformers := models.CreateScenePerformers(scene.ID, input.Performers)
+		if err := jqb.UpdatePerformersScenes(scene.ID, scenePerformers); err != nil {
+			_ = tx.Rollback()
+			return nil, err
+		}
 	}
 
 	// Save the tags
-	// TODO - only do this if provided
-	tagJoins := models.CreateSceneTags(scene.ID, input.TagIds)
+	// only do this if provided
+	if wasFieldIncluded(ctx, "tagIds") {
+		tagJoins := models.CreateSceneTags(scene.ID, input.TagIds)
 
-	if err := jqb.UpdateScenesTags(scene.ID, tagJoins); err != nil {
-		return nil, err
+		if err := jqb.UpdateScenesTags(scene.ID, tagJoins); err != nil {
+			return nil, err
+		}
 	}
 
 	// Commit

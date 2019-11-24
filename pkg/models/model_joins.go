@@ -26,16 +26,16 @@ type PerformerScene struct {
 	SceneID     int64          `db:"scene_id" json:"scene_id"`
 }
 
-type PerformersScenes []PerformerScene
+type PerformersScenes []*PerformerScene
 
 func (p PerformersScenes) Each(fn func(interface{})) {
 	for _, v := range p {
-		fn(v)
+		fn(*v)
 	}
 }
 
 func (p *PerformersScenes) Add(o interface{}) {
-	*p = append(*p, o.(PerformerScene))
+	*p = append(*p, o.(*PerformerScene))
 }
 
 type SceneTag struct {
@@ -43,14 +43,14 @@ type SceneTag struct {
 	TagID   int64 `db:"tag_id" json:"tag_id"`
 }
 
-type ScenesTags []SceneTag
+type ScenesTags []*SceneTag
 
 func (p ScenesTags) Each(fn func(interface{})) {
 	for _, v := range p {
-		fn(v)
+		fn(*v)
 	}
 }
 
 func (p *ScenesTags) Add(o interface{}) {
-	*p = append(*p, o.(SceneTag))
+	*p = append(*p, o.(*SceneTag))
 }

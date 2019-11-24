@@ -45,7 +45,7 @@ type Scenes []*Scene
 
 func (p Scenes) Each(fn func(interface{})) {
 	for _, v := range p {
-		fn(v)
+		fn(*v)
 	}
 }
 
@@ -58,16 +58,16 @@ type SceneChecksum struct {
 	Checksum string `db:"checksum" json:"checksum"`
 }
 
-type SceneChecksums []SceneChecksum
+type SceneChecksums []*SceneChecksum
 
 func (p SceneChecksums) Each(fn func(interface{})) {
 	for _, v := range p {
-		fn(v)
+		fn(*v)
 	}
 }
 
 func (p *SceneChecksums) Add(o interface{}) {
-	*p = append(*p, o.(SceneChecksum))
+	*p = append(*p, o.(*SceneChecksum))
 }
 
 func (p SceneChecksums) ToChecksums() []string {
@@ -83,17 +83,17 @@ func CreateSceneChecksums(sceneID int64, checksums []string) SceneChecksums {
 	var ret SceneChecksums
 
 	for _, checksum := range checksums {
-		ret = append(ret, SceneChecksum{SceneID: sceneID, Checksum: checksum})
+		ret = append(ret, &SceneChecksum{SceneID: sceneID, Checksum: checksum})
 	}
 
 	return ret
 }
 
-func CreateSceneTags(sceneID int64, tagIds []string) []SceneTag {
-	var tagJoins []SceneTag
+func CreateSceneTags(sceneID int64, tagIds []string) ScenesTags {
+	var tagJoins ScenesTags
 	for _, tid := range tagIds {
 		tagID, _ := strconv.ParseInt(tid, 10, 64)
-		tagJoin := SceneTag{
+		tagJoin := &SceneTag{
 			SceneID: sceneID,
 			TagID:   tagID,
 		}
@@ -103,11 +103,11 @@ func CreateSceneTags(sceneID int64, tagIds []string) []SceneTag {
 	return tagJoins
 }
 
-func CreateScenePerformers(sceneID int64, appearances []*PerformerAppearanceInput) []PerformerScene {
-	var performerJoins []PerformerScene
+func CreateScenePerformers(sceneID int64, appearances []*PerformerAppearanceInput) PerformersScenes {
+	var performerJoins PerformersScenes
 	for _, a := range appearances {
 		performerID, _ := strconv.ParseInt(a.PerformerID, 10, 64)
-		performerJoin := PerformerScene{
+		performerJoin := &PerformerScene{
 			SceneID:     sceneID,
 			PerformerID: performerID,
 		}

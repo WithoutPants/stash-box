@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -90,6 +91,10 @@ func (r *mutationResolver) PerformerUpdate(ctx context.Context, input models.Per
 		return nil, err
 	}
 
+	if updatedPerformer == nil {
+		return nil, fmt.Errorf("Performer with id %d cannot be found", performerID)
+	}
+
 	updatedPerformer.UpdatedAt = models.SQLiteTimestamp{Timestamp: time.Now()}
 
 	// Populate performer from the input
@@ -102,35 +107,43 @@ func (r *mutationResolver) PerformerUpdate(ctx context.Context, input models.Per
 	}
 
 	// Save the aliases
-	// TODO - only do this if provided
-	performerAliases := models.CreatePerformerAliases(performer.ID, input.Aliases)
-	if err := qb.UpdateAliases(performer.ID, performerAliases); err != nil {
-		_ = tx.Rollback()
-		return nil, err
+	// only do this if provided
+	if wasFieldIncluded(ctx, "aliases") {
+		performerAliases := models.CreatePerformerAliases(performer.ID, input.Aliases)
+		if err := qb.UpdateAliases(performer.ID, performerAliases); err != nil {
+			_ = tx.Rollback()
+			return nil, err
+		}
 	}
 
 	// Save the URLs
-	// TODO - only do this if provided
-	performerUrls := models.CreatePerformerUrls(performer.ID, input.Urls)
-	if err := qb.UpdateUrls(performer.ID, performerUrls); err != nil {
-		_ = tx.Rollback()
-		return nil, err
+	// only do this if provided
+	if wasFieldIncluded(ctx, "urls") {
+		performerUrls := models.CreatePerformerUrls(performer.ID, input.Urls)
+		if err := qb.UpdateUrls(performer.ID, performerUrls); err != nil {
+			_ = tx.Rollback()
+			return nil, err
+		}
 	}
 
 	// Save the Tattoos
-	// TODO - only do this if provided
-	performerTattoos := models.CreatePerformerBodyMods(performer.ID, input.Tattoos)
-	if err := qb.UpdateTattoos(performer.ID, performerTattoos); err != nil {
-		_ = tx.Rollback()
-		return nil, err
+	// only do this if provided
+	if wasFieldIncluded(ctx, "tattoos") {
+		performerTattoos := models.CreatePerformerBodyMods(performer.ID, input.Tattoos)
+		if err := qb.UpdateTattoos(performer.ID, performerTattoos); err != nil {
+			_ = tx.Rollback()
+			return nil, err
+		}
 	}
 
 	// Save the Piercings
-	// TODO - only do this if provided
-	performerPiercings := models.CreatePerformerBodyMods(performer.ID, input.Piercings)
-	if err := qb.UpdatePiercings(performer.ID, performerPiercings); err != nil {
-		_ = tx.Rollback()
-		return nil, err
+	// only do this if provided
+	if wasFieldIncluded(ctx, "piercings") {
+		performerPiercings := models.CreatePerformerBodyMods(performer.ID, input.Piercings)
+		if err := qb.UpdatePiercings(performer.ID, performerPiercings); err != nil {
+			_ = tx.Rollback()
+			return nil, err
+		}
 	}
 
 	// Commit

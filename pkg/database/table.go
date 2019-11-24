@@ -86,7 +86,8 @@ type Models interface {
 
 // Joins is the interface implemented by slices of join objects.
 type Joins interface {
-	// Each calls the provided function on each of the objects in the slice.
+	// Each calls the provided function on each of the concrete (not pointer)
+	// objects in the slice.
 	Each(func(interface{}))
 
 	// Add adds a new object to the slice. It is assumed that the passed

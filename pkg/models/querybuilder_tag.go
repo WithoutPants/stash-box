@@ -67,7 +67,7 @@ func (qb *TagQueryBuilder) FindByNameOrAlias(name string) (*Tag, error) {
 func (qb *TagQueryBuilder) FindBySceneID(sceneID int64) ([]*Tag, error) {
 	query := `
 		SELECT tags.* FROM tags
-		LEFT JOIN scenes_tags as scenes_join on scenes_join.tag_id = tags.id
+		LEFT JOIN scene_tags as scenes_join on scenes_join.tag_id = tags.id
 		LEFT JOIN scenes on scenes_join.scene_id = scenes.id
 		WHERE scenes.id = ?
 		GROUP BY tags.id

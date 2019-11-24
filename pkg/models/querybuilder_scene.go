@@ -174,3 +174,10 @@ func (qb *SceneQueryBuilder) GetChecksums(id int64) ([]string, error) {
 
 	return joins.ToChecksums(), err
 }
+
+func (qb *SceneQueryBuilder) GetPerformers(id int64) (PerformersScenes, error) {
+	joins := PerformersScenes{}
+	err := qb.dbi.FindJoins(scenePerformerTable, id, &joins)
+
+	return joins, err
+}
