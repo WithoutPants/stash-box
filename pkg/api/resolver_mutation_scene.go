@@ -47,8 +47,8 @@ func (r *mutationResolver) SceneCreate(ctx context.Context, input models.SceneCr
 
 	// TODO - save the performers
 	scenePerformers := models.CreateScenePerformers(scene.ID, input.Performers)
-	jqb := models.NewJoinsQueryBuilder()
-	if err := jqb.CreatePerformersScenes(scenePerformers, tx); err != nil {
+	jqb := models.NewJoinsQueryBuilder(tx)
+	if err := jqb.CreatePerformersScenes(scenePerformers); err != nil {
 		_ = tx.Rollback()
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func (r *mutationResolver) SceneCreate(ctx context.Context, input models.SceneCr
 	// Save the tags
 	tagJoins := models.CreateSceneTags(scene.ID, input.TagIds)
 
-	if err := jqb.CreateScenesTags(tagJoins, tx); err != nil {
+	if err := jqb.CreateScenesTags(tagJoins); err != nil {
 		return nil, err
 	}
 
@@ -105,8 +105,8 @@ func (r *mutationResolver) SceneUpdate(ctx context.Context, input models.SceneUp
 
 	// TODO - only do this if provided
 	scenePerformers := models.CreateScenePerformers(scene.ID, input.Performers)
-	jqb := models.NewJoinsQueryBuilder()
-	if err := jqb.UpdatePerformersScenes(scene.ID, scenePerformers, tx); err != nil {
+	jqb := models.NewJoinsQueryBuilder(tx)
+	if err := jqb.UpdatePerformersScenes(scene.ID, scenePerformers); err != nil {
 		_ = tx.Rollback()
 		return nil, err
 	}
@@ -115,7 +115,7 @@ func (r *mutationResolver) SceneUpdate(ctx context.Context, input models.SceneUp
 	// TODO - only do this if provided
 	tagJoins := models.CreateSceneTags(scene.ID, input.TagIds)
 
-	if err := jqb.UpdateScenesTags(scene.ID, tagJoins, tx); err != nil {
+	if err := jqb.UpdateScenesTags(scene.ID, tagJoins); err != nil {
 		return nil, err
 	}
 

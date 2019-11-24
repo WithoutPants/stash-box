@@ -78,7 +78,7 @@ func sqlGenKeysCreate(i interface{}) (string, string) {
 	var values []string
 
 	addPlaceholder := func(key string) {
-		fields = append(fields, key)
+		fields = append(fields, "`"+key+"`")
 		values = append(values, ":"+key)
 	}
 

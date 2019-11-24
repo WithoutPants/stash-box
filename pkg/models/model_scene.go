@@ -89,11 +89,11 @@ func CreateSceneChecksums(sceneID int64, checksums []string) SceneChecksums {
 	return ret
 }
 
-func CreateSceneTags(sceneID int64, tagIds []string) []ScenesTags {
-	var tagJoins []ScenesTags
+func CreateSceneTags(sceneID int64, tagIds []string) []SceneTag {
+	var tagJoins []SceneTag
 	for _, tid := range tagIds {
 		tagID, _ := strconv.ParseInt(tid, 10, 64)
-		tagJoin := ScenesTags{
+		tagJoin := SceneTag{
 			SceneID: sceneID,
 			TagID:   tagID,
 		}
@@ -103,11 +103,11 @@ func CreateSceneTags(sceneID int64, tagIds []string) []ScenesTags {
 	return tagJoins
 }
 
-func CreateScenePerformers(sceneID int64, appearances []*PerformerAppearanceInput) []PerformersScenes {
-	var performerJoins []PerformersScenes
+func CreateScenePerformers(sceneID int64, appearances []*PerformerAppearanceInput) []PerformerScene {
+	var performerJoins []PerformerScene
 	for _, a := range appearances {
 		performerID, _ := strconv.ParseInt(a.PerformerID, 10, 64)
-		performerJoin := PerformersScenes{
+		performerJoin := PerformerScene{
 			SceneID:     sceneID,
 			PerformerID: performerID,
 		}
