@@ -49,6 +49,6 @@ func (r *sceneResolver) Performers(ctx context.Context, obj *models.Scene) ([]*m
 	return nil, nil
 }
 func (r *sceneResolver) Checksums(ctx context.Context, obj *models.Scene) ([]string, error) {
-	qb := models.NewSceneQueryBuilder()
+	qb := models.NewSceneQueryBuilder(nil)
 	return qb.GetChecksums(obj.ID)
 }

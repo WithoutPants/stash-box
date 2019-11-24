@@ -31,8 +31,8 @@ func (r *mutationResolver) SceneCreate(ctx context.Context, input models.SceneCr
 
 	// Start the transaction and save the scene
 	tx := database.DB.MustBeginTx(ctx, nil)
-	qb := models.NewSceneQueryBuilder()
-	scene, err := qb.Create(newScene, tx)
+	qb := models.NewSceneQueryBuilder(tx)
+	scene, err := qb.Create(newScene)
 	if err != nil {
 		_ = tx.Rollback()
 		return nil, err
@@ -40,7 +40,7 @@ func (r *mutationResolver) SceneCreate(ctx context.Context, input models.SceneCr
 
 	// Save the aliases
 	sceneAliases := models.CreateSceneChecksums(scene.ID, input.Checksums)
-	if err := qb.CreateChecksums(sceneAliases, tx); err != nil {
+	if err := qb.CreateChecksums(sceneAliases); err != nil {
 		_ = tx.Rollback()
 		return nil, err
 	}
@@ -73,7 +73,8 @@ func (r *mutationResolver) SceneUpdate(ctx context.Context, input models.SceneUp
 		return nil, err
 	}
 
-	qb := models.NewSceneQueryBuilder()
+	tx := database.DB.MustBeginTx(ctx, nil)
+	qb := models.NewSceneQueryBuilder(tx)
 
 	// get the existing scene and modify it
 	sceneID, _ := strconv.ParseInt(input.ID, 10, 64)
@@ -85,13 +86,10 @@ func (r *mutationResolver) SceneUpdate(ctx context.Context, input models.SceneUp
 
 	updatedScene.UpdatedAt = models.SQLiteTimestamp{Timestamp: time.Now()}
 
-	// Start the transaction and save the scene
-	tx := database.DB.MustBeginTx(ctx, nil)
-
 	// Populate scene from the input
 	updatedScene.CopyFromUpdateInput(input)
 
-	scene, err := qb.Update(*updatedScene, tx)
+	scene, err := qb.Update(*updatedScene)
 	if err != nil {
 		_ = tx.Rollback()
 		return nil, err
@@ -100,7 +98,7 @@ func (r *mutationResolver) SceneUpdate(ctx context.Context, input models.SceneUp
 	// Save the checksums
 	// TODO - only do this if provided
 	sceneAliases := models.CreateSceneChecksums(scene.ID, input.Checksums)
-	if err := qb.UpdateChecksums(scene.ID, sceneAliases, tx); err != nil {
+	if err := qb.UpdateChecksums(scene.ID, sceneAliases); err != nil {
 		_ = tx.Rollback()
 		return nil, err
 	}
@@ -134,8 +132,8 @@ func (r *mutationResolver) SceneDestroy(ctx context.Context, input models.SceneD
 		return false, err
 	}
 
-	qb := models.NewSceneQueryBuilder()
 	tx := database.DB.MustBeginTx(ctx, nil)
+	qb := models.NewSceneQueryBuilder(tx)
 
 	// references have on delete cascade, so shouldn't be necessary
 	// to remove them explicitly
@@ -144,7 +142,7 @@ func (r *mutationResolver) SceneDestroy(ctx context.Context, input models.SceneD
 	if err != nil {
 		return false, err
 	}
-	if err = qb.Destroy(sceneID, tx); err != nil {
+	if err = qb.Destroy(sceneID); err != nil {
 		_ = tx.Rollback()
 		return false, err
 	}
