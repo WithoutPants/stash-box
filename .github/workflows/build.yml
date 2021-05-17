@@ -2,7 +2,7 @@ name: Build
 
 on:
   push:
-    branches: [ develop, master ]
+    branches: [ develop, master, prs/70 ]
   pull_request:
     branches: [ develop ]
   release:
@@ -135,10 +135,10 @@ jobs:
         path: dist/stash-box_linux_amd64/stash-box-linux
         
     - name: Update latest_develop tag
-      if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/develop' }}
+      if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/prs/70' }}
       run : git tag -f latest_develop; git push -f --tags
     - name: Development Release
-      if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/develop' }}      
+      if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/prs/70' }}      
       uses: meeDamian/github-release@2.0
       with:
         token: "${{ secrets.GITHUB_TOKEN }}"
