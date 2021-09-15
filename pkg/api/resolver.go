@@ -73,6 +73,12 @@ func (r *queryResolver) Version(ctx context.Context) (*models.Version, error) {
 	}, nil
 }
 
+type subscriptionResolver struct{ *Resolver }
+
+func (r *Resolver) Subscription() models.SubscriptionResolver {
+	return &subscriptionResolver{r}
+}
+
 // wasFieldIncluded returns true if the given field was included in the request.
 // Slices are unmarshalled to empty slices even if the field was omitted. This
 // method determines if it was omitted altogether.

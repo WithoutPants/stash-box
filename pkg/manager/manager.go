@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"github.com/stashapp/stash-box/pkg/email"
+	"github.com/stashapp/stash-box/pkg/job"
 	"github.com/stashapp/stash-box/pkg/logger"
 	"github.com/stashapp/stash-box/pkg/manager/config"
 	"github.com/stashapp/stash-box/pkg/manager/paths"
@@ -19,6 +20,7 @@ import (
 
 type singleton struct {
 	EmailManager *email.Manager
+	JobManager   *job.Manager
 }
 
 var instance *singleton
@@ -37,6 +39,7 @@ func Initialize() *singleton {
 		initLog()
 		instance = &singleton{
 			EmailManager: email.NewManager(),
+			JobManager:   job.NewManager(),
 		}
 	})
 

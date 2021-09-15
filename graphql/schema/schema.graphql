@@ -67,6 +67,10 @@ type Query {
   searchPerformer(term: String!, limit: Int): [Performer!]!
   searchScene(term: String!, limit: Int): [Scene!]!
 
+  # Job status
+  jobQueue: [Job!]
+  findJob(input: FindJobInput!): Job
+
   #### Version ####
   version: Version!
 }
@@ -142,6 +146,10 @@ type Mutation {
   cancelEdit(input: CancelEditInput!): Edit!
 
   submitFingerprint(input: FingerprintSubmission!): Boolean!
+}
+
+type Subscription {
+  jobsSubscribe: JobStatusUpdate!
 }
 
 schema {
