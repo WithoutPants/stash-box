@@ -146,6 +146,9 @@ type Mutation {
   cancelEdit(input: CancelEditInput!): Edit!
 
   submitFingerprint(input: FingerprintSubmission!): Boolean!
+
+  stopJob(job_id: ID!): Boolean!
+  stopAllJobs: Boolean!
 }
 
 type Subscription {
