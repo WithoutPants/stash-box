@@ -98,6 +98,20 @@ export enum HairColorEnum {
   VARIOUS = "VARIOUS",
 }
 
+export enum JobStatus {
+  CANCELLED = "CANCELLED",
+  FINISHED = "FINISHED",
+  READY = "READY",
+  RUNNING = "RUNNING",
+  STOPPING = "STOPPING",
+}
+
+export enum JobStatusUpdateType {
+  ADD = "ADD",
+  REMOVE = "REMOVE",
+  UPDATE = "UPDATE",
+}
+
 export enum OperationEnum {
   CREATE = "CREATE",
   DESTROY = "DESTROY",

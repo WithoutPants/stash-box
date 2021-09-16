@@ -20,6 +20,7 @@ import {
   ROUTE_RESET_PASSWORD,
   ROUTE_HOME,
 } from "src/constants/route";
+import JobManager from "src/components/jobManager";
 import AuthContext from "./AuthContext";
 
 interface User {
@@ -138,6 +139,11 @@ const Main: React.FC = ({ children }) => {
           {contextValue.authenticated && renderUserNav()}
           <SearchField searchType={SearchType.Combined} navigate showAllLink />
         </Nav>
+        {isRole("ADMIN") && (
+          <Nav>
+            <JobManager />
+          </Nav>
+        )}
       </Navbar>
       <div className="StashDBContent container-fluid">
         <AuthContext.Provider value={contextValue}>

@@ -61,6 +61,8 @@ import {
 } from "../definitions/RevokeInvite";
 import { EditComment, EditCommentVariables } from "../definitions/EditComment";
 import { StudioEdit, StudioEditVariables } from "../definitions/StudioEdit";
+import { StopJob, StopJobVariables } from "../definitions/StopJob";
+import { StopAllJobs } from "../definitions/StopAllJobs";
 
 const ActivateUserMutation = loader("./ActivateNewUser.gql");
 const AddUserMutation = loader("./AddUser.gql");
@@ -89,6 +91,8 @@ const GrantInviteMutation = loader("./GrantInvite.gql");
 const RescindInviteCodeMutation = loader("./RescindInviteCode.gql");
 const RevokeInviteMutation = loader("./RevokeInvite.gql");
 const EditCommentMutation = loader("./EditComment.gql");
+const StopJobMutation = loader("./StopJob.gql");
+const StopAllJobsMutation = loader("./StopAllJobs.gql");
 
 export const useActivateUser = (
   options?: MutationHookOptions<ActivateNewUser, ActivateNewUserVariables>
@@ -197,3 +201,10 @@ export const useRevokeInvite = (
 export const useEditComment = (
   options?: MutationHookOptions<EditComment, EditCommentVariables>
 ) => useMutation(EditCommentMutation, options);
+
+export const useStopJob = (
+  options?: MutationHookOptions<StopJob, StopJobVariables>
+) => useMutation(StopJobMutation, options);
+
+export const useStopAllJobs = (options?: MutationHookOptions<StopAllJobs>) =>
+  useMutation(StopAllJobsMutation, options);

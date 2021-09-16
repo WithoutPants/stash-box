@@ -30,12 +30,14 @@ import { Tag, TagVariables } from "../definitions/Tag";
 import { Tags, TagsVariables } from "../definitions/Tags";
 import { User, UserVariables } from "../definitions/User";
 import { Users, UsersVariables } from "../definitions/Users";
+import { JobQueue } from "../definitions/JobQueue";
 
 const CategoryQuery = loader("./Category.gql");
 const CategoriesQuery = loader("./Categories.gql");
 const EditQuery = loader("./Edit.gql");
 const EditsQuery = loader("./Edits.gql");
 const MeQuery = loader("./Me.gql");
+const JobQueueQuery = loader("./JobQueue.gql");
 const PerformerQuery = loader("./Performer.gql");
 const FullPerformerQuery = loader("./FullPerformer.gql");
 const PerformersQuery = loader("./Performers.gql");
@@ -76,6 +78,9 @@ export const useEdits = (variables: EditsVariables) =>
 
 export const useMe = (options?: QueryHookOptions<Me>) =>
   useQuery<Me>(MeQuery, options);
+
+export const useJobQueue = (options?: QueryHookOptions<JobQueue>) =>
+  useQuery<JobQueue>(JobQueueQuery, options);
 
 export const usePerformer = (
   variables: PerformerVariables,
